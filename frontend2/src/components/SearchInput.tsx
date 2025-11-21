@@ -49,12 +49,12 @@ export default function SearchInput({
 
         { searchValue && <CircleX onClick={reset} className='w-4 mr-1 h-4 cursor-pointer' />}
 
-        <Button  
+        {searchValue !== q && <Button  
         size="sm" 
         variant="static" 
         onClick={() => setQuery(searchValue)} 
         className="shrink-0 h-auto p-1" 
-        aria-label="Clear search">Search</Button>
+        aria-label="Clear search">Search</Button>}
 
       </div>
 
