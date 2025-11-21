@@ -3,10 +3,11 @@ import type { SpaceEntity } from '@/types/source.interface'
 import { Button } from '../ui/button'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '../ui/card'
 import Confidence from './Confidence'
-import { X } from 'lucide-react'
 import FullScreenCard from './FullScreenCard'
+import { Skeleton } from '../ui/skeleton'
 
 const SpaceCard = ({ image }: { image: SpaceEntity }) => {
+  const [imageLoading, setImageLoading] = useState(true);
   const [isFullScreen, setIsFullScreen] = useState(false)
 
   const openFullScreen = () => setIsFullScreen(true)
@@ -21,7 +22,12 @@ const SpaceCard = ({ image }: { image: SpaceEntity }) => {
           <CardDescription className="line-clamp-3 italic">{image.description}</CardDescription>
         </CardHeader>
         <CardContent className="flex-1 min-h-0 overflow-hidden">
-          <img loading="lazy" src={image.image_url} alt={image.name} className="w-full h-32 sm:h-40 md:h-48 object-cover" />
+          {imageLoading && <Skeleton className="w-full h-full" />}
+          <img 
+          src={image.image_url} 
+          onLoad={() => setImageLoading(false)}
+          alt={image.name} 
+          className="w-full h-32 sm:h-40 md:h-48 object-cover" />
           {image.launch_date && new Date(image.launch_date).toLocaleDateString()}
         </CardContent>
         <CardFooter className="flex-col gap-2 shrink-0">

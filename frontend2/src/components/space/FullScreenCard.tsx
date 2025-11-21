@@ -2,7 +2,8 @@ import type { SpaceEntity } from "@/types/source.interface"
 import { X } from "lucide-react"
 
 const FullScreenCard = ({ image, closeFullScreenCB }: { image: SpaceEntity, closeFullScreenCB: () => void })=> {
-  return (
+  
+    return (
     <div 
           className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4"
           onClick={closeFullScreenCB}
@@ -22,6 +23,7 @@ const FullScreenCard = ({ image, closeFullScreenCB }: { image: SpaceEntity, clos
               src={image.image_url} 
               alt={image.name} 
               className="max-w-full max-h-[90vh] object-contain"
+            ç
             />
             <div className="absolute bottom-0 left-0 right-0 bg-black/70 text-white p-4 text-center">
               <h3 className="font-semibold text-lg">{image.name}</h3>
