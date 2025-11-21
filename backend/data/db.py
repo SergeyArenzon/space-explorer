@@ -16,6 +16,7 @@ class SpaceDB:
         # Flatten and map the data to the expected format
         self._sources = []
         self._history: dict[str, HistoryItem] = {}
+        self._sorted_history: list[str] = []
 
         items = json_data.get("collection", {}).get("items", [])
         for idx, item in enumerate(items, start=1):
@@ -101,13 +102,14 @@ class SpaceDB:
         return sorted_results
 
 
-    def get_history(self) -> list[HistoryItem]:
+    def get_history(self, page: int = 1, page_size: int = 3) -> list[HistoryItem]:
         """Returns list of history items sorted by date (newest first)."""
-        history_items = list(self._history.values())
-        # Sort by created_at in descending order (newest first)
-        sorted_history = sorted(history_items, key=lambda x: x.created_at, reverse=True)
-        return sorted_history
-        
+        items_id = self._sorted_history[page - 1:page_size]
+
+        items = [{**self._sources[item["source_id"] - 1], "confidence": item["confidence"]} for item in items_id]
+        return items
+
+
     def set_history(self, query: str, results: list[dict], total: int) -> dict:
         new_history = HistoryItem(
             q=query,
@@ -123,7 +125,15 @@ class SpaceDB:
             })
 
         self._history[new_history.q] = new_history
+
+        self._sorted_history.append(query)
         return query
+
+    def delete_from_sorted_history(self, q: str):
+        if q in self._sorted_history:
+            self._sorted_history.remove(q)
+        else:
+            raise ValueError(f"History item with id {q} not found")
 
     def delete_history(self, q: str):
         if q in self._history:
@@ -142,6 +152,7 @@ class SpaceDB:
         Returns:
             Tuple of (sources for the page, total count)
         """
+        print(self._sorted_history)
         filtered_sources = {}
         total = 0
         if q in self._history:

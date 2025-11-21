@@ -39,8 +39,12 @@ def get_sources(
 
 
 @app.get("/api/history", response_model=List[HistoryItem])
-def get_history():
-    history = db.get_history()
+def get_history(
+    page: int = Query(1, ge=1, description="Page number (1-indexed)"),
+    page_size: int = Query(3, ge=1,le=100, description="Number of items per page"),
+):
+    
+    history = db.get_history(page=page, page_size=page_size)
     return history
    
 
@@ -49,6 +53,7 @@ def get_history():
 def delete_history(q: str):
     try:
         db.delete_history(q)
+        db.delete_from_sorted_history(q)
         return {"message": "History deleted successfully"}
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
