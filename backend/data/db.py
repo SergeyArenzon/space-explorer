@@ -142,15 +142,22 @@ class SpaceDB:
         Returns:
             Tuple of (sources for the page, total count)
         """
-        history = {}
+        filtered_sources = {}
+        total = 0
         if q in self._history:
-            history = self._history[q]
-        print(history)
-        filtered_sources = self.search_items(q)
-
-        total = len(filtered_sources)
-        start = (page - 1) * page_size
-        end = start + page_size
-        items = filtered_sources[start:end]
+            print("HISTORY!!")
+            filtered_sources = self._history[q].items
+            total = self._history[q].total
+            start = (page - 1) * page_size
+            end = start + page_size
+            items_id = filtered_sources[start:end]
+            items = [{**self._sources[item["source_id"] - 1], "confidence": item["confidence"]} for item in items_id]
+        else:
+            print("REAL FETCH!!")
+            filtered_sources = self.search_items(q)
+            total = len(filtered_sources)
+            start = (page - 1) * page_size
+            end = start + page_size
+            items = filtered_sources[start:end]
         return items, total
 

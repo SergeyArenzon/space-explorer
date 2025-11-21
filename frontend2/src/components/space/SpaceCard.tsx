@@ -1,26 +1,36 @@
+import { useState } from 'react'
 import type { SpaceEntity } from '@/types/source.interface'
 import { Button } from '../ui/button'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '../ui/card'
 import Confidence from './Confidence'
+import { X } from 'lucide-react'
+import FullScreenCard from './FullScreenCard'
 
 const SpaceCard = ({ image }: { image: SpaceEntity }) => {
+  const [isFullScreen, setIsFullScreen] = useState(false)
 
+  const openFullScreen = () => setIsFullScreen(true)
+  const closeFullScreen = () => setIsFullScreen(false)
 
   return (
-    <Card className="w-full max-w-xs sm:max-w-sm h-64 sm:h-72 md:h-80 overflow-hidden  flex flex-col text-base sm:text-lg md:text-xl">
-      <CardHeader  className="shrink-0">
-        {image.confidence && <Confidence confidence={image.confidence} />}
-        <CardTitle>{image.name}</CardTitle>
-        <CardDescription className="line-clamp-3 italic">{image.description}</CardDescription>
-      </CardHeader>
-      <CardContent className="flex-1 min-h-0 overflow-hidden">
-        <img loading="lazy" src={image.image_url} alt={image.name} className="w-full h-32 sm:h-40 md:h-48 object-cover" />
-        {image.launch_date && new Date(image.launch_date).toLocaleDateString()}
-      </CardContent>
-      <CardFooter className="flex-col gap-2 shrink-0">
-        <Button variant={"outline"} className="w-full">View Full Image</Button>
-      </CardFooter>
-    </Card>
+    <>
+      <Card className="w-full max-w-xs sm:max-w-sm h-64 sm:h-72 md:h-80 overflow-hidden  flex flex-col text-base sm:text-lg md:text-xl">
+        <CardHeader  className="shrink-0">
+          {image.confidence && <Confidence confidence={image.confidence} />}
+          <CardTitle>{image.name}</CardTitle>
+          <CardDescription className="line-clamp-3 italic">{image.description}</CardDescription>
+        </CardHeader>
+        <CardContent className="flex-1 min-h-0 overflow-hidden">
+          <img loading="lazy" src={image.image_url} alt={image.name} className="w-full h-32 sm:h-40 md:h-48 object-cover" />
+          {image.launch_date && new Date(image.launch_date).toLocaleDateString()}
+        </CardContent>
+        <CardFooter className="flex-col gap-2 shrink-0">
+          <Button variant={"outline"} className="w-full" onClick={openFullScreen}>View Full Image</Button>
+        </CardFooter>
+      </Card>
+
+      {isFullScreen && <FullScreenCard image={image} closeFullScreenCB={closeFullScreen} />}
+    </>
   )
 }
 
