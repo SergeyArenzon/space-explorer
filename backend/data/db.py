@@ -1,6 +1,10 @@
 import json
 import os
-from typing import Dict, List
+import re
+import uuid
+from datetime import datetime
+from typing import Dict, List, Tuple
+from models import HistoryItem
 
 
 class SpaceDB:
@@ -11,6 +15,8 @@ class SpaceDB:
             json_data = json.load(f)
         # Flatten and map the data to the expected format
         self._sources = []
+        self._history: dict[str, HistoryItem] = {}
+
         items = json_data.get("collection", {}).get("items", [])
         for idx, item in enumerate(items, start=1):
             data = item.get("data", [{}])[0]
@@ -33,6 +39,108 @@ class SpaceDB:
             )
         self._next_id = len(self._sources) + 1
 
-    def get_all_sources(self) -> List[Dict]:
-        """Get all space sources."""
-        return self._sources
+    def compute_confidence_score(self, query: str, item: dict) -> int:
+        """
+        Compute weighted confidence score for object with:
+        {
+            "name": "...",
+            "description": "..."
+        }
+        """
+        name = item.get("name", "").lower()
+        desc = item.get("description", "").lower()
+
+        score = 0
+        valid_words = 0
+
+        for word in query:
+            if len(word) < 3:
+                continue
+            
+            valid_words += 1
+            
+            if word in name:
+                score += 5
+
+            if word in desc:
+                score += 2
+
+        # Max possible: each word can contribute 5 (name) + 2 (description) = 7 points
+        max_possible = valid_words * 7
+
+        if max_possible == 0:
+            return 0
+
+        return round((score / max_possible) * 100)
+    
+    def search_items(self, query: str) -> list[dict]:
+        """
+        Returns items with confidence score included,
+        sorted by score DESC.
+        """
+        if not query:
+            return self._sources
+        q_words = re.findall(r"\w+", query.lower())
+
+        results = []
+
+        for item in self._sources:
+            score = self.compute_confidence_score(q_words, item)
+            if score > 0:
+                results.append({
+                    **item,
+                    "confidence": score
+                })
+
+
+        # Sort highest-score first
+        sorted_results = sorted(results, key=lambda x: x["confidence"], reverse=True)
+        self.set_history(query, sorted_results)
+        return sorted_results
+
+
+    def get_history(self) -> list[HistoryItem]:
+        """Returns list of history items sorted by date (newest first)."""
+        history_items = list(self._history.values())
+        # Sort by created_at in descending order (newest first)
+        sorted_history = sorted(history_items, key=lambda x: x.created_at, reverse=True)
+        return sorted_history
+        
+    def set_history(self, query: str, results: list[dict]) -> dict:
+        history_id = str(uuid.uuid4())
+
+        new_history = HistoryItem(
+            id=history_id,
+            q=query,
+            results=[],
+            created_at=datetime.now()
+        )
+
+        for result in results:
+            new_history.results.append({
+                "source_id": result["id"],
+                "confidence": result["confidence"],
+            })
+
+        self._history[new_history.id] = new_history
+        return history_id
+
+
+    def get_sources(self, page: int = 1, page_size: int = 5, q: str = None) -> Tuple[List[Dict], int]:
+        """Get paginated space sources.
+        
+        Args:
+            page: Page number (1-indexed)
+            page_size: Number of items per page
+            
+        Returns:
+            Tuple of (sources for the page, total count)
+        """
+
+        filtered_sources = self.search_items(q)
+
+        total = len(filtered_sources)
+        start = (page - 1) * page_size
+        end = start + page_size
+        items = filtered_sources[start:end]
+        return items, total
