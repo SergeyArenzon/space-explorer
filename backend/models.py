@@ -31,8 +31,8 @@ class HistoryResult(BaseModel):
     confidence: int
 
 class HistoryItem(BaseModel):
-    id: str
     q: str
-    results: List[HistoryResult]
+    items: List[HistoryResult]
     created_at: datetime
+    total: int
 

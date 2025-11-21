@@ -6,4 +6,5 @@ export interface SpaceEntity {
     image_url: string;
     type: string;
     status: string;
+    confidence?: number;
   }

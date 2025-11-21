@@ -20,11 +20,12 @@ const SpaceList = () => {
       }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-center justify-center">
-      
-    {pagination.items.map((image: SpaceEntity) => (
-      <SpaceCard key={image.id}  image={image}/>
-    ))}
+    <div className="grid grid-cols-1 md:grid-cols-2   lg:grid-cols-3 gap-6 justify-items-center">
+
+        {pagination.items.map((image: SpaceEntity) => (
+          <SpaceCard key={image.id}  image={image}/>
+        ))}
+
 
 
     {pagination.total_pages > 0 && (

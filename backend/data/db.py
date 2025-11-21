@@ -95,7 +95,9 @@ class SpaceDB:
 
         # Sort highest-score first
         sorted_results = sorted(results, key=lambda x: x["confidence"], reverse=True)
-        self.set_history(query, sorted_results)
+        if query not in self._history:
+            self.set_history(query, sorted_results, len(sorted_results))
+        
         return sorted_results
 
 
@@ -106,24 +108,28 @@ class SpaceDB:
         sorted_history = sorted(history_items, key=lambda x: x.created_at, reverse=True)
         return sorted_history
         
-    def set_history(self, query: str, results: list[dict]) -> dict:
-        history_id = str(uuid.uuid4())
-
+    def set_history(self, query: str, results: list[dict], total: int) -> dict:
         new_history = HistoryItem(
-            id=history_id,
             q=query,
-            results=[],
+            items=[],
+            total=total,
             created_at=datetime.now()
         )
 
         for result in results:
-            new_history.results.append({
+            new_history.items.append({
                 "source_id": result["id"],
                 "confidence": result["confidence"],
             })
 
-        self._history[new_history.id] = new_history
-        return history_id
+        self._history[new_history.q] = new_history
+        return query
+
+    def delete_history(self, q: str):
+        if q in self._history:
+            del self._history[q]
+        else:
+            raise ValueError(f"History item with id {q} not found")
 
 
     def get_sources(self, page: int = 1, page_size: int = 5, q: str = None) -> Tuple[List[Dict], int]:
@@ -136,7 +142,10 @@ class SpaceDB:
         Returns:
             Tuple of (sources for the page, total count)
         """
-
+        history = {}
+        if q in self._history:
+            history = self._history[q]
+        print(history)
         filtered_sources = self.search_items(q)
 
         total = len(filtered_sources)
@@ -144,3 +153,4 @@ class SpaceDB:
         end = start + page_size
         items = filtered_sources[start:end]
         return items, total
+

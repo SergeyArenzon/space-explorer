@@ -45,3 +45,11 @@ def get_history():
    
 
 
+@app.delete("/api/history/{q}")
+def delete_history(q: str):
+    try:
+        db.delete_history(q)
+        return {"message": "History deleted successfully"}
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+    return {"message": "History deleted successfully"}

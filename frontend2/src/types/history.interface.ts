@@ -5,8 +5,9 @@ export interface HistoryResult {
 
 export interface HistoryItem {
   id: string;
-  query: string;
-  results: HistoryResult[];
+  q: string;
+  items: HistoryResult[];
   created_at: string;
+  total: number;
 }
 
