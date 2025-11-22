@@ -1,7 +1,7 @@
 from typing import List
 
 from data.db import SpaceDB
-from fastapi import FastAPI, Query
+from fastapi import FastAPI, Query, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from models import PaginatedResponse, Source, HistoryItem
 
@@ -38,14 +38,22 @@ def get_sources(
     )
 
 
-@app.get("/api/history", response_model=List[HistoryItem])
+@app.get("/api/history", response_model=PaginatedResponse[HistoryItem])
 def get_history(
     page: int = Query(1, ge=1, description="Page number (1-indexed)"),
-    page_size: int = Query(3, ge=1,le=100, description="Number of items per page"),
+    page_size: int = Query(3, ge=1, le=100, description="Number of items per page"),
 ):
+    """Get paginated history items."""
+    items, total = db.get_history(page=page, page_size=page_size)
+    total_pages = (total + page_size - 1) // page_size  # Ceiling division
     
-    history = db.get_history(page=page, page_size=page_size)
-    return history
+    return PaginatedResponse(
+        items=items,
+        total=total,
+        page=page,
+        page_size=page_size,
+        total_pages=total_pages
+    )
    
 
 

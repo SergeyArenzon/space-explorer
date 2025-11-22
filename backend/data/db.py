@@ -102,12 +102,15 @@ class SpaceDB:
         return sorted_results
 
 
-    def get_history(self, page: int = 1, page_size: int = 3) -> list[HistoryItem]:
-        """Returns list of history items sorted by date (newest first)."""
-        items_id = self._sorted_history[page - 1:page_size]
-
-        items = [{**self._sources[item["source_id"] - 1], "confidence": item["confidence"]} for item in items_id]
-        return items
+    def get_history(self, page: int = 1, page_size: int = 3) -> Tuple[List[HistoryItem], int]:
+        """Returns list of history items sorted by date (newest first) and total count."""
+        total = len(self._sorted_history)
+        start = (page - 1) * page_size
+        end = start + page_size
+        items_id = self._sorted_history[start:end]
+        
+        items = [self._history[item_q] for item_q in items_id]
+        return items, total
 
 
     def set_history(self, query: str, results: list[dict], total: int) -> dict:
@@ -126,7 +129,8 @@ class SpaceDB:
 
         self._history[new_history.q] = new_history
 
-        self._sorted_history.append(query)
+        # Prepend to keep newest first (more efficient than reversing)
+        self._sorted_history.insert(0, query)
         return query
 
     def delete_from_sorted_history(self, q: str):

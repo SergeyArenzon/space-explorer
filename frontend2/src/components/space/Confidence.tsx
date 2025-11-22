@@ -1,4 +1,4 @@
-import React from 'react'
+import { Progress } from "@/components/ui/progress"
 
 const Confidence = ({confidence}: {confidence: number}) => {
 
@@ -16,7 +16,6 @@ const Confidence = ({confidence}: {confidence: number}) => {
       return 'text-red-700 bg-red-100'
     }
   return (
-     (
         <div className="mb-2 space-y-1.5">
           <div className="flex items-center justify-between gap-2">
             <span className="text-xs font-medium text-muted-foreground">Match Confidence</span>
@@ -24,14 +23,11 @@ const Confidence = ({confidence}: {confidence: number}) => {
               {confidence}%
             </span>
           </div>
-          <div className="relative w-full h-2 bg-gray-200 rounded-full overflow-hidden">
-            <div
-              className={`h-full ${getConfidenceColor(confidence)} transition-all duration-500 ease-out rounded-full`}
-              style={{ width: `${confidence}%` }}
-            />
-          </div>
+          <Progress 
+            value={confidence} 
+            indicatorClassName={getConfidenceColor(confidence)}
+          />
         </div>
-      )
   )
 }
 
