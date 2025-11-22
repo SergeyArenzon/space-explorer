@@ -15,11 +15,11 @@ const SpaceCard = ({ image }: { image: SpaceEntity }) => {
 
   return (
     <>
-      <Card className="w-full max-w-xs sm:max-w-sm h-64 sm:h-72 md:h-80 overflow-hidden  flex flex-col text-base sm:text-lg md:text-xl">
+      <Card className="w-full h-full max-w-xs sm:max-w-sm m:h-72 md:h-80 overflow-hidden  flex flex-col text-base sm:text-lg md:text-xl hover:bg-primary/2 hover:shadow-lg transition-all duration-300">
         <CardHeader  className="shrink-0">
           {image.confidence && <Confidence confidence={image.confidence} />}
-          <CardTitle>{image.name}</CardTitle>
-          <CardDescription className="line-clamp-3 italic">{image.description}</CardDescription>
+          <CardTitle className="line-clamp-2">{image.name}</CardTitle>
+          <CardDescription className="line-clamp-2 italic">{image.description}</CardDescription>
         </CardHeader>
         <CardContent className="flex-1 min-h-0 overflow-hidden">
           {imageLoading && <Skeleton className="w-full h-full" />}
