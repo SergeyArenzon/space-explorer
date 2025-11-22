@@ -23,6 +23,7 @@ class PaginatedResponse(BaseModel, Generic[T]):
     page: int
     page_size: int
     total_pages: int
+    new_history: Optional['HistoryItem'] = None
     q: Optional[str] = None
 
 
@@ -35,4 +36,3 @@ class HistoryItem(BaseModel):
     items: List[HistoryResult]
     created_at: datetime
     total: int
-

@@ -3,15 +3,8 @@ import { Search, CircleX } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Button } from './ui/button'
 import { usePaginationStore } from '@/store/paginationStore'
-import { Badge } from './ui/badge'
 
-interface SearchInputProps {
-  placeholder?: string
-}
-
-export default function SearchInput({
-  placeholder = 'Search...',
-}: SearchInputProps) {
+export default function SearchInput({placeholder = 'Search...'}: { placeholder?: string }) {
   const [isFocused, setIsFocused] = useState(false);
   const [searchValue, setSearchValue] = useState("");
   const { q, setQuery } = usePaginationStore();

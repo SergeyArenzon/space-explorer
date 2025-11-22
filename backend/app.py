@@ -25,7 +25,7 @@ def get_sources(
     q: str = Query(None, description="Search query")
 ):
     """Get paginated space sources."""
-    items, total = db.get_sources(page=page, page_size=page_size, q=q)
+    items, total, new_history = db.get_sources(page=page, page_size=page_size, q=q)
     total_pages = (total + page_size - 1) // page_size  # Ceiling division
     
     return PaginatedResponse(
@@ -34,7 +34,8 @@ def get_sources(
         page=page,
         page_size=page_size,
         total_pages=total_pages,
-        q=q
+        q=q,
+        new_history=new_history
     )
 
 

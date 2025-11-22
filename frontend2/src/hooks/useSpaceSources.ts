@@ -3,6 +3,7 @@ import axios from 'axios';
 import { usePaginationStore } from '@/store/paginationStore';
 import type { Pagination } from '@/types/pagination.type';
 import { useScreenSize } from './useScreenSize';
+import { useHistoryStore } from '@/store/historyStore';
 
 
 interface UseSpaceSourcesReturn {
@@ -46,14 +47,15 @@ export const useSpaceSources = (): UseSpaceSourcesReturn => {
 
   // Get pagination state and actions from Zustand store
   const { pagination, setPagination, setPage, q } = usePaginationStore();
+  const { addHistoryItem } = useHistoryStore();
+  const { isSm, isMd, isLg, isMobile } = useScreenSize();
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const prevQueryRef = useRef<string>(q);
 
-  const { isSm, isMd, isLg, isMobile } = useScreenSize();
 
-  console.log({isSm, isMd, isLg, isMobile});
+
   
   const screenSizeToPageSize = (): number => {
     if (isLg) return 9;
@@ -77,6 +79,9 @@ export const useSpaceSources = (): UseSpaceSourcesReturn => {
 
       // Update Zustand store with the response data
       setPagination(response.data);
+      if (response.data.new_history) {
+        addHistoryItem(response.data.new_history);
+      }
       setLoading(false);
     } catch (error) {
       console.error('Error fetching sources:', error);

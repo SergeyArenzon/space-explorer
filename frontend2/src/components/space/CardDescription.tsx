@@ -5,7 +5,7 @@ const CardDescription = ({ description }: { description: string }) => {
 
   return (
     <div 
-      className={`absolute bottom-0 left-0 right-0 px-2 py-2 text-xs text-white italic bg-black/60 ${isDescExpanded ? 'max-h-32 overflow-y-auto overflow-x-hidden' : ''}`}
+      className={`absolute bottom-0 left-0 right-0 px-2 py-2 text-xs text-white italic bg-black/60 ${isDescExpanded ? 'max-h-32 overflow-y-auto overflow-x-hidden [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-black/20 [&::-webkit-scrollbar-thumb]:bg-white/30 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:hover:bg-white/40' : ''}`}
       onMouseLeave={() => {
         if (isDescExpanded) {
           setIsDescExpanded(false);

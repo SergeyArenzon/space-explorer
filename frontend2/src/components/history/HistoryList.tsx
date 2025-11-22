@@ -3,6 +3,7 @@ import { useEffect, useState, useCallback } from "react"
 import HistoryItem from "./HistoryItem";
 import type { HistoryItem as HistoryItemType } from "../../types/history.interface";
 import { SpacePagination } from "../space/SpacePagination";
+import { useHistoryStore } from "@/store/historyStore";
 
 interface PaginatedHistoryResponse {
     items: HistoryItemType[];
@@ -13,7 +14,7 @@ interface PaginatedHistoryResponse {
 }
 
 const HistoryList = () => {
-    const [history, setHistory] = useState<HistoryItemType[]>([]);
+    const { history, setHistory, removeHistoryItem } = useHistoryStore();
     const [pagination, setPagination] = useState({
         page: 1,
         page_size: 3,
@@ -34,13 +35,14 @@ const HistoryList = () => {
                 total_pages: response.data.total_pages,
             });
         }
-    }, [pagination.page, pagination.page_size]);
+    }, [pagination.page, pagination.page_size, setHistory]);
 
     const deleteHandler = useCallback((q: string) => {
         const deleteHistory = async () => {
             const response = await axios.delete(`http://localhost:8000/api/history/${q}`);
             if (response.status === 200) {
-                // Refetch current page after deletion
+                // Remove from store and refetch current page after deletion
+                removeHistoryItem(q);
                 await loadHistory();
             } else {
                 console.error('Failed to delete history');
@@ -48,7 +50,7 @@ const HistoryList = () => {
         }
 
         deleteHistory();
-    }, [loadHistory]);
+    }, [loadHistory, removeHistoryItem]);
 
     useEffect(() => {
         let cancelled = false;

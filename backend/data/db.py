@@ -4,7 +4,7 @@ import re
 import uuid
 from datetime import datetime
 from typing import Dict, List, Tuple
-from models import HistoryItem
+from models import HistoryItem, HistoryResult
 
 
 class SpaceDB:
@@ -122,10 +122,10 @@ class SpaceDB:
         )
 
         for result in results:
-            new_history.items.append({
-                "source_id": result["id"],
-                "confidence": result["confidence"],
-            })
+            new_history.items.append(HistoryResult(
+                source_id=result["id"],
+                confidence=result["confidence"],
+            ))
 
         self._history[new_history.q] = new_history
 
@@ -156,9 +156,9 @@ class SpaceDB:
         Returns:
             Tuple of (sources for the page, total count)
         """
-        print(self._sorted_history)
         filtered_sources = {}
         total = 0
+        new_history = None
         if q in self._history:
             print("HISTORY!!")
             filtered_sources = self._history[q].items
@@ -166,7 +166,7 @@ class SpaceDB:
             start = (page - 1) * page_size
             end = start + page_size
             items_id = filtered_sources[start:end]
-            items = [{**self._sources[item["source_id"] - 1], "confidence": item["confidence"]} for item in items_id]
+            items = [{**self._sources[item.source_id - 1], "confidence": item.confidence} for item in items_id]
         else:
             print("REAL FETCH!!")
             filtered_sources = self.search_items(q)
@@ -174,5 +174,9 @@ class SpaceDB:
             start = (page - 1) * page_size
             end = start + page_size
             items = filtered_sources[start:end]
-        return items, total
+            if q != "":
+                new_history = self._history[q]
+
+        print(new_history)
+        return items, total, new_history
 
