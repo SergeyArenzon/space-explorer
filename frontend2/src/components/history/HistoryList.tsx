@@ -70,7 +70,7 @@ const HistoryList = () => {
     
 
     return (
-    <div className="flex flex-col">
+    <div className="flex flex-col ml-4">
         <h2 className="text-left text-lg font-bold mb-2">Recent</h2>
         <div>
             {history.map((item) => <HistoryItem key={item.q} history={item} deleteHandler={deleteHandler} />)}

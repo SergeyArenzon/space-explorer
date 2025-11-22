@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-interface ScreenSize {
+export interface ScreenSize {
   width: number;
   height: number;
   isMobile: boolean;

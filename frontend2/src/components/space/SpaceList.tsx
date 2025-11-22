@@ -20,14 +20,15 @@ const SpaceList = () => {
       }
 
   return (
-    <div className='flex flex-col gap-3'>
+    <div className='flex flex-col gap-3 w-full h-full'>
         {q && <SearchBadge/>}
-        <div className="grid grid-cols-1 md:grid-cols-2   lg:grid-cols-3 gap-6 justify-items-center">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full h-full">
             {pagination.items.map((image: SpaceEntity) => (
               <SpaceCard key={image.id}  image={image}/>
             ))}
+        </div>
         {pagination.total_pages > 0 && (
-                    <div className="col-span-full flex justify-center w-full">
+                    <div className=" col-span-full h-10 flex justify-center w-full">
                       <SpacePagination 
                         currentPage={pagination.page} 
                         totalPages={pagination.total_pages}
@@ -35,7 +36,6 @@ const SpaceList = () => {
                       />
                     </div>
                   )}
-        </div>
     </div>
 
   )

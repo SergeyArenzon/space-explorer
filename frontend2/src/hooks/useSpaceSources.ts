@@ -4,6 +4,7 @@ import { usePaginationStore } from '@/store/paginationStore';
 import type { Pagination } from '@/types/pagination.type';
 import { useScreenSize } from './useScreenSize';
 import { useHistoryStore } from '@/store/historyStore';
+import { clearUrl, getPageFromUrl, screenSizeToPageSize, updateUrl } from './helpers';
 
 
 interface UseSpaceSourcesReturn {
@@ -14,33 +15,7 @@ interface UseSpaceSourcesReturn {
   refetch: () => void;
 }
 
-// Get page from URL params or default to 1
-const getPageFromUrl = (): number => {
-  const params = new URLSearchParams(window.location.search);
-  const page = parseInt(params.get('page') || '1', 10);
-  return page > 0 ? page : 1;
-};
 
-// Update URL with new page and query
-const updateUrl = (page: number, q: string) => {
-  const url = new URL(window.location.href);
-  url.searchParams.set('page', page.toString());
-  if (q) {
-    url.searchParams.set('q', q);
-  } else {
-    url.searchParams.delete('q');
-  }
-  window.history.pushState({}, '', url.toString());
-};
-
-// Clear all URL parameters
-const clearUrl = () => {
-  if (typeof window !== 'undefined') {
-    const url = new URL(window.location.href);
-    url.search = ''; // Clear all query parameters
-    window.history.pushState({}, '', url.toString());
-  }
-};
 
 export const useSpaceSources = (): UseSpaceSourcesReturn => {
   const  apiUrl = 'http://localhost:8000/api/sources' 
@@ -48,22 +23,11 @@ export const useSpaceSources = (): UseSpaceSourcesReturn => {
   // Get pagination state and actions from Zustand store
   const { pagination, setPagination, setPage, q } = usePaginationStore();
   const { addHistoryItem } = useHistoryStore();
-  const { isSm, isMd, isLg, isMobile } = useScreenSize();
+  const screenSizes = useScreenSize();
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const prevQueryRef = useRef<string>(q);
-
-
-
-  
-  const screenSizeToPageSize = (): number => {
-    if (isLg) return 9;
-    if (isMd) return 6;
-    if (isSm) return 3;
-    if (isMobile) return 3;
-    return 6;
-  }
 
   const fetchImages = useCallback(async () => {
     setLoading(true);
@@ -74,7 +38,7 @@ export const useSpaceSources = (): UseSpaceSourcesReturn => {
       const currentQuery = usePaginationStore.getState().q;
 
       const response = await axios.get(
-        `${apiUrl}?page=${currentPage}&page_size=${screenSizeToPageSize()}&q=${encodeURIComponent(currentQuery)}`
+        `${apiUrl}?page=${currentPage}&page_size=${screenSizeToPageSize(screenSizes)}&q=${encodeURIComponent(currentQuery)}`
       );
 
       // Update Zustand store with the response data
@@ -88,7 +52,7 @@ export const useSpaceSources = (): UseSpaceSourcesReturn => {
       setError('Failed to fetch space images');
       setLoading(false);
     }
-  }, [setPagination]);
+  }, []);
 
   
   // Reset to page 1 when query changes, or clear URL when reset
