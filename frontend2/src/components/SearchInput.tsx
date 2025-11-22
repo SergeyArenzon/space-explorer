@@ -3,6 +3,7 @@ import { Search, CircleX } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Button } from './ui/button'
 import { usePaginationStore } from '@/store/paginationStore'
+import { Badge } from './ui/badge'
 
 interface SearchInputProps {
   placeholder?: string
@@ -36,6 +37,8 @@ export default function SearchInput({
           }`}
         />
 
+        <Badge/>
+
         <Input
           type="text"
           value={searchValue}
@@ -47,14 +50,16 @@ export default function SearchInput({
         />
 
 
-        { searchValue && <CircleX onClick={reset} className='w-4 mr-1 h-4 cursor-pointer' />}
+        { searchValue && <CircleX onClick={() => setSearchValue("")} className='w-4 mr-1 h-4 cursor-pointer' />}
 
-        {searchValue !== q && <Button  
-        size="sm" 
-        variant="static" 
-        onClick={() => setQuery(searchValue)} 
-        className="shrink-0 h-auto p-1" 
-        aria-label="Clear search">Search</Button>}
+        {searchValue !== q && 
+         searchValue !== "" && 
+         <Button  
+            size="sm" 
+            variant="static" 
+            onClick={() => setQuery(searchValue)} 
+            className="shrink-0 h-auto p-1" 
+            aria-label="Clear search">Search</Button>}
 
       </div>
 
