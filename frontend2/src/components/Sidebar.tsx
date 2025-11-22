@@ -14,7 +14,7 @@ const Sidebar = () => {
   return (
     <div className='flex flex-col gap-3 relative'>
         <SearchInput 
-        placeholder="Search for a space image" />
+        placeholder="Search images..." />
       
         <Button
           variant="ghost"
