@@ -96,7 +96,7 @@ conntour-space-explorer/
 │   ├── models.py     # Data models
 │   ├── data/         # Database and data handling
 │   └── requirements.txt
-└── frontend2/         # React frontend application
+└── frontend/         # React frontend application
     ├── src/          # Source code
     └── package.json
 ```
