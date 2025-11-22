@@ -14,7 +14,7 @@ export default function SearchInput({
 }: SearchInputProps) {
   const [isFocused, setIsFocused] = useState(false);
   const [searchValue, setSearchValue] = useState("");
-  const { q, setQuery, reset } = usePaginationStore();
+  const { q, setQuery } = usePaginationStore();
 
   // Sync local state with store
   useEffect(() => {
@@ -36,8 +36,6 @@ export default function SearchInput({
             isFocused ? 'text-primary' : 'text-muted-foreground'
           }`}
         />
-
-        <Badge/>
 
         <Input
           type="text"
