@@ -22,7 +22,7 @@ const SpaceList = () => {
   return (
     <div className='flex flex-col gap-3 w-full h-full'>
         {q && <SearchBadge/>}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full h-full">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full h-full ">
             {pagination.items.map((image: SpaceEntity) => (
               <SpaceCard key={image.id}  image={image}/>
             ))}
