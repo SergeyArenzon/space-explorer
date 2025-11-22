@@ -20,12 +20,9 @@ const getInitialPage = (): number => {
   return page > 0 ? page : 1;
 };
 
-// Get initial page size from URL or default to 6
+// Get initial page size (default to 6, no longer read from URL)
 const getInitialPageSize = (): number => {
-  if (typeof window === 'undefined') return 6;
-  const params = new URLSearchParams(window.location.search);
-  const pageSize = parseInt(params.get('page_size') || '6', 10);
-  return pageSize > 0 ? pageSize : 6;
+  return 6;
 };
 
 // Get initial query from URL or default to empty string

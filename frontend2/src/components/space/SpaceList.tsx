@@ -6,8 +6,6 @@ import { SpacePagination } from './SpacePagination';
 
 const SpaceList = () => {
     const { loading, error, pagination, handlePageChange } = useSpaceSources();
-    console.log({pagination});
-    
 
     if (loading) {
         return <div className="flex justify-center items-center min-h-screen">
