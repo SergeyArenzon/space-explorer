@@ -24,7 +24,8 @@ const SpaceCard = ({ image }: { image: SpaceEntity }) => {
           <CardTitle className="line-clamp-1">{image.name}</CardTitle>
         </CardHeader>
         <CardContent className="flex-1 overflow-hidden relative mx-2 bg-black rounded 
-        min-h-44 max-h-44 
+        min-h-20 max-h-20 
+        sm:min-h-44 sm:ax-h-44 
 
         flex items-center justify-center">        
           <span className="absolute text-white top-0 right-0 text-xs mr-1 mt-1 bg-black/60 rounded-sm z-10">
