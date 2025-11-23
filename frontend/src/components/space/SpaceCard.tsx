@@ -23,18 +23,14 @@ const SpaceCard = ({ image }: { image: SpaceEntity }) => {
           {image.confidence && <Confidence confidence={image.confidence} />}
           <CardTitle className="line-clamp-1">{image.name}</CardTitle>
         </CardHeader>
-        <CardContent className="flex-1 overflow-hidden relative mx-2 bg-black rounded 
-        min-h-20 max-h-20 
-        sm:min-h-44 sm:ax-h-44 
-
-        flex items-center justify-center">        
+        <CardContent className="flex-1 overflow-hidden relative mx-2 bg-black rounded max-h-[15vh] flex items-center justify-center">        
           <span className="absolute text-white top-0 right-0 text-xs mr-1 mt-1 bg-black/60 rounded-sm z-10">
             {image.launch_date && new Date(image.launch_date).toLocaleDateString()} 
           </span>
   
           {imageLoading && <Skeleton className="w-full h-full absolute inset-0" />}
           <img 
-            className="object-contain w-full h-full"
+            className="object-contain "
             src={image.image_url} 
             onLoad={() => setImageLoading(false)}
             alt={image.name}  
